@@ -29,11 +29,11 @@ long long ts, te;
 #define FILE_NODE "./map/NY/NY-d.node"
 #define FILE_EDGE "./map/NY/NY-d.edge"
 
-// set all edge weight to 1(unweighted graph)//无权重图，则设置所有边权重为1 需要根据数据更改 
+// set all edge weight to 1(unweighted graph)
 #define ADJWEIGHT_SET_TO_ALL_ONE false
 // we assume edge weight is integer, thus (input edge) * WEIGHT_INFLATE_FACTOR = (our edge weight)
-#define WEIGHT_INFLATE_FACTOR 100000//权重扩大系数 
-// gtree fanout  扇 ，Partition_Part 表示 gptree 分叉数，对应论文中 fallout 
+#define WEIGHT_INFLATE_FACTOR 100000
+// gtree fanout   ，Partition_Part 
 #define PARTITION_PART 2
 // gtree leaf node capacity = tau(in paper)
 #define LEAF_CAP 32
@@ -44,8 +44,8 @@ long long ts, te;
 
 typedef struct{
 	long x,y;
-	vector<int> adjnodes;//	储存邻接点 
-	vector<int> adjweight;//储存对应下标邻接点的权重 
+	vector<int> adjnodes;
+	vector<int> adjweight;
 	bool isborder;
 	vector<int> gtreepath; // this is used to do sub-graph locating
 }Node;
@@ -66,25 +66,21 @@ typedef struct{
 	vector<int> current_pos;
 }TreeNode;
 
-int noe; // number of edges	边数目 
+int noe; // number of edges	
 vector<Node> Nodes;
 vector<TreeNode> GTree;
-/*在ParMetis中, 有两个重要的数据类型, 分别是 idx_t 和 real_t . 
-这两个类型分别是用来存储整型和浮点型变量. 
-indx_t 可以是32位或64位有符号整数, ~real_t~可以是单精度或双精度浮点数. 
-所有API的输入都是这两个类型的数组.
-*/  
+
 // use for metis
 // idx_t = int64_t / real_t = double
 idx_t nvtxs; // |vertices|	节点个数 
-idx_t ncon; // number of weight per vertex	每个节点的权值数目 --> 
-idx_t* xadj; // array of adjacency of indices	索引邻接数组 
-idx_t* adjncy; // array of adjacency nodes	邻接节点数组 
-idx_t* vwgt; // array of weight of nodes	节点权重数组
-idx_t* adjwgt; // array of weight of edges in adjncy	邻接节点中边的权值数组
-idx_t nparts; // number of parts to partition	分割块的数目 
-idx_t objval; // edge cut for partitioning solution	分割解决方案的边切割
-idx_t* part; // array of partition vector分割向量数组 
+idx_t ncon; // number of weight per vertex	
+idx_t* xadj; // array of adjacency of indices	
+idx_t* adjncy; // array of adjacency nodes	
+idx_t* vwgt; // array of weight of nodes	
+idx_t* adjwgt; // array of weight of edges in adjncy	
+idx_t nparts; // number of parts to partition
+idx_t objval; // edge cut for partitioning solution	
+idx_t* part; // array of partition vector
 idx_t options[METIS_NOPTIONS]; // option array
 
 // METIS setting options
@@ -118,8 +114,8 @@ void init_input(){
 	long x,y;
 	while( fscanf(fin, "%c %d %ld %ld\n",&flag, &nid, &x, &y ) == 4 ){
 			//printf("flag=%c nid = %d x=%ld y=%ld\n",flag,nid,x,y);
-			Node node = { x, y };// 用经纬度构造所有的节点 
-			Nodes.push_back(node);// 将所有节点放入Nodes容器中 
+			Node node = { x, y };
+			Nodes.push_back(node);
 		
 	}
 	
@@ -135,13 +131,13 @@ void init_input(){
 	int iweight;
 	noe = 0;
 	while( fscanf(fin,"%c %d %d %d\n", &eid, &snid, &enid, &iweight ) == 4 ){
-		//统计边个数 
-	//	iweight = (int) (weight * WEIGHT_INFLATE_FACTOR );//小数权值乘以扩大系数10000，如果原边权重为整则不必改变 
+		
+	//	iweight = (int) (weight * WEIGHT_INFLATE_FACTOR );
 		
 			noe ++;
-			Nodes[snid-1].adjnodes.push_back( enid -1 );//给节点snid的邻接点添加邻接点enid 
+			Nodes[snid-1].adjnodes.push_back( enid -1 );
 			Nodes[snid-1].adjweight.push_back( iweight );
-	//	Nodes[enid].adjnodes.push_back( snid );//反向添加节点enid的邻接点snid,这里的edge文件格式储存的是单向边 
+	//	Nodes[enid].adjnodes.push_back( snid );
 	//	Nodes[enid].adjweight.push_back( iweight );
 		}
     
@@ -150,23 +146,22 @@ void init_input(){
 	printf("COMPLETE.\n");
 }
 
-// transform original data format to that suitable for METIS 转化数据格式为metis处理格式 
 void data_transform_init( set<int> &nset ){
 	// nvtxs, ncon
 	nvtxs = nset.size();
-	ncon = 1;//每个节点的权值  
-	//使用稀疏矩阵串行CSR格式存储 
-	xadj = new idx_t[nset.size() + 1];//索引偏移量数组  大小为总节点数+1 
-	adjncy = new idx_t[noe * 2];// 邻接节点数组
-	adjwgt = new idx_t[noe * 2];//	邻接节点权重数组 
+	ncon = 1;
+	
+	xadj = new idx_t[nset.size() + 1];
+	adjncy = new idx_t[noe * 2];
+	adjwgt = new idx_t[noe * 2];
 
 
 	int xadj_pos = 1;
-	int xadj_accum = 0;//邻接点数目 
+	int xadj_accum = 0;
 	int adjncy_pos = 0;
 
 	// xadj, adjncy, adjwgt
-	unordered_map<int,int> nodemap;//<节点id,顺序编号>
+	unordered_map<int,int> nodemap;
 	nodemap.clear();
 
 	xadj[0] = 0;
@@ -175,23 +170,23 @@ void data_transform_init( set<int> &nset ){
 		// init node map
 		nodemap[*it] = i;
 
-		int nid = *it;//取节点id 
-		int fanout = Nodes[nid].adjnodes.size();//节点nid的邻接数组的大小 
+		int nid = *it;
+		int fanout = Nodes[nid].adjnodes.size(); 
 		for ( int j = 0; j < fanout; j++ ){
-			int enid = Nodes[nid].adjnodes[j];//获取邻接点id 
-			// ensure edges within 确保邻接点id在nset里面 
+			int enid = Nodes[nid].adjnodes[j];
+			// ensure edges within 
 			if ( nset.find( enid ) != nset.end() ){
-				xadj_accum ++;//记录邻节点个数 
+				xadj_accum ++;
 
-				adjncy[adjncy_pos] = enid;//保存邻接点id 
-				adjwgt[adjncy_pos] = Nodes[nid].adjweight[j];//相同位置保存该邻接点enid边的权重 
+				adjncy[adjncy_pos] = enid;
+				adjwgt[adjncy_pos] = Nodes[nid].adjweight[j];
 				adjncy_pos ++;
 			}
 		}
-		xadj[xadj_pos++] = xadj_accum;//记录偏移量索引数组，每次累加偏移量 
+		xadj[xadj_pos++] = xadj_accum;
 	}
 
-	// adjust nodes number started by 0 节点按照从0开始编号 如果是从0开始编号，则无差别，如果否，降id 
+	// adjust nodes number started by 0 
 	for ( int i = 0; i < adjncy_pos; i++ ){
 		adjncy[i] = nodemap[adjncy[i]];
 	}
@@ -204,10 +199,10 @@ void data_transform_init( set<int> &nset ){
 	}
 
 	// nparts
-	nparts = PARTITION_PART;//4 
+	nparts = PARTITION_PART;
 
 	// part
-	part = new idx_t[nset.size()];//节点个数大小 
+	part = new idx_t[nset.size()];
 }
 
 void init(){
@@ -234,8 +229,8 @@ unordered_map<int,int> graph_partition( set<int> &nset ){
 	// partition, result -> part
 	// k way partition
 	METIS_PartGraphKway(
-        &nvtxs,//节点数 
-        &ncon,// 每个节点的权值数目 
+        &nvtxs,
+        &ncon, 
         xadj,
         adjncy,
         NULL,
@@ -262,10 +257,10 @@ unordered_map<int,int> graph_partition( set<int> &nset ){
 		out<<endl;
 	}
 /////////
-		out<<"完全ojbk";
+		
 		out.close();
 
-	// finalize释放无用内存 
+
 	finalize();
 
 	return result;
@@ -273,8 +268,8 @@ unordered_map<int,int> graph_partition( set<int> &nset ){
 
 // init status struct
 typedef struct{
-	int tnid; // tree node id	树节点id 
-	set<int> nset; // node set	节点id集合 
+	int tnid; // tree node id	
+	set<int> nset; // node set	
 }Status;
 
 // gtree construction
@@ -285,7 +280,7 @@ void build(){
 	root.father = -1;
 	GTree.push_back(root);
 
-	// init stack堆栈，实现了一个先进后出（FILO）的数据结构 
+	
 	 
 	stack<Status> buildstack;
 	Status rootstatus;
@@ -306,12 +301,12 @@ void build(){
 		Status current = buildstack.top();
 		buildstack.pop();
 
-		// update gtreepath更新g树路径 
+	
 		for ( set<int>::iterator it = current.nset.begin(); it != current.nset.end(); it++ ){
 			Nodes[*it].gtreepath.push_back( current.tnid );
 		}
 
-		// check cardinality校验基数 
+	
 		if ( current.nset.size() <= LEAF_CAP ){
 			// build leaf node
 			GTree[current.tnid].isleaf = true;
