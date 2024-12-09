@@ -630,7 +630,6 @@ struct Tree_Decomposition{
 // floyd deal with vertices which is deleted
 int main()
 {
-    ofstream result("/home/xiongxing/reviewProject/H2H-Index/test.txt");
     std::chrono::high_resolution_clock::time_point t1;
     std::chrono::high_resolution_clock::time_point t2;
     std::chrono::high_resolution_clock::time_point t3;
@@ -642,25 +641,15 @@ int main()
 //	cout << "Operation: ";
 //	scanf("%d", &operation);
 //	operation = 2;
-	if (operation == 1){ // ????1???????????????index 
-	//	cout << "input file: ";
+	if (operation == 1){ 
 		string filest;
-	//	cin >> filest;
 		char *file, *fileout;
 		int i;
          char *edgeFile="/home/xiongxing/reviewProject/MAP/Example/USA-road-d.Example.gr";
          char *indexFile="/home/xiongxing/reviewProject/MAP/Example/H2H/Example.index";
-	//	for (i = 0; i < filest.length(); i++) file[i] = filest[i];
-	//	file[i] = '\0';
 		file = edgeFile;
 		cout << "file: " << file<<endl;
-
-	//	cout << "output file: ";
-	//	cin >> filest;
-	//	for (i = 0; i < filest.length(); i++) fileout[i] = filest[i];
-	//	fileout[i] = '\0';
 		fileout = indexFile;
-		
 		Tree_Decomposition td;
 		td.fout = fopen(fileout, "wb");
 		td.G = Graph(file);
@@ -673,20 +662,13 @@ int main()
 		td.makeIndex();
 		cout << "MakeIndex time: " << (double)(clock() - start) / CLOCKS_PER_SEC << endl; 
 		td.print();
-	//	cout << "print finished! " << endl;
-	//	start = clock();
 		td.makeIndex2();
         t2 = std::chrono::high_resolution_clock::now();
-	//	cout << "MakeIndex2 time: " << (double)(clock() - start) / CLOCKS_PER_SEC << endl; 
-		td.reducePos();
-	//	cout << "reducePos finished" << endl;
+	td.reducePos();
         time_span = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1);
         cout<<"time :"<<time_span.count()<<endl;
 		cout << "MakeIndex time: " << (double)(clock() - start) / CLOCKS_PER_SEC << endl;
-        result<<fileout<<" ";
 		td.cntSize(result);
-        result<<" build time is "<<time_span.count()<<endl;
-        result<<"-----------------------------------------"<<endl;
 		fclose(stdout);
 
 	}
