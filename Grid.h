@@ -5,13 +5,12 @@
 #ifndef GRIDINDEX_GRID_H
 #define GRIDINDEX_GRID_H
 
-//1.5Km
+
 #include "MBR.h"
 #include "Graph.h"
 #include "Point.h"
 using namespace std;
-//init is 100m 单位是分米
-static const int CELLSIZE=30000;
+static const int CELLSIZE=300000;
 static const int MINPOINT=4;
 class Grid {
 public:
