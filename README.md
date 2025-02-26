@@ -23,7 +23,7 @@ Please note that these two files are separate C++ projects that can be run direc
 
 We used four models, which are in the folder /Model.
 
-The code for some of the models is referenced  at  "*<u>Why do tree-based models still outperform deep learning on tabular data?* (Advances in Neural Information Processing Systems 2022)</u>* " https://github.com/LeoGrin/tabular-benchmark/tree/main.
+The code for some of the models is referenced  at  "*<u>Why do tree-based models still outperform deep learning on tabular data?* (Advances in Neural Information Processing Systems 2022)</u> " https://github.com/LeoGrin/tabular-benchmark/tree/main.
 
 To accommodate the multi-class classification model in this paper, we modified the original code.
 
