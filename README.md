@@ -1,6 +1,6 @@
 # Welcome to AIL
 
-![QQ20250226-100908](C:\Users\Xing\Desktop\QQ20250226-100908.png)
+![AIL framework](https://github.com/CodeOwnerSAU/ICDE-2025-AIL/blob/main/AILframework.png)
 
 ## Data set
 
