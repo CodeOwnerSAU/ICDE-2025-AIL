@@ -17,4 +17,29 @@ BuildIGTreeIndex.cpp has built an IGTree index.
 
 Please note that these two files are separate C++ projects that can be run directly
 
- 
+##  Predictive model
+
+We used four models, which are in the folder /Model.
+
+The code for some of the models is referenced  at https://github.com/LeoGrin/tabular-benchmark/tree/main.
+
+To accommodate the multi-class classification model in this paper, we modified the original code.
+
+*SVM*: We use the One-vs-One strategy and then train binary SVM classifiers in parallel.
+
+*MLP*: The Mish activation function is used to replace the traditional ReLU, a learnable feature scaling layer is introduced to automatically learn the weights for each feature dimension, and a sigmoid gating mechanism is added after each activation layer.
+
+*XGBoost*: We add a custom Focal Loss to reduce the weight of easily classified samples, and scipy.sparse.csr_matrix is utilized to handle high-dimensional sparse features.
+
+## Train
+
+ In the AIL_peak_train.csv file, each row of the table represents a query that contains features.
+
+```
+Query_ID,Start_Point,End_Point,Road_Distance,Keyword_Count,POI_Density,Query_Density,POI_Type,POI_Contain,Execution_Time,Path_Distance,OptimalID
+1,93035,234870,5497208,2,2,0.010546,500,5,0.0002031560,5657805,7
+```
+
+OptimalID represents the optimal algorithm that has been assigned to the current query.
+
+Then, preprocessing is carried out using preprocess.py, and the model is trained based on the hyperparameters in HYPERPARAMETERS.py.
