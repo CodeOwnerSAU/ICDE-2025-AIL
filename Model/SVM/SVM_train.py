@@ -130,19 +130,13 @@ def load_training_data():
     train_data = pd.read_csv("AIL_peak_train.csv")
     test_data = pd.read_csv("AIL_peak_test.csv")
 
-
-    for df in [train_data, test_data]:
-        df['POI_Interaction'] = df['POI_Density'] * df['POI_Type']
-
-
     poi_train = csr_matrix(pd.get_dummies(train_data['POI_distrubtion'], prefix='POI'))
     poi_test = csr_matrix(pd.get_dummies(test_data['POI_distrubtion'], prefix='POI')
                           .reindex(columns=poi_train.columns, fill_value=0))
 
 
     num_features = ['Road_Distance', 'Query_Density', 'Execution_Time',
-                    'Keyword_Count', 'POI_Density', 'POI_Type', 'POI_Contain',
-                    'POI_Interaction']
+                    'Keyword_Count', 'POI_Density', 'POI_Type', 'POI_Contain']
     scaler = StandardScaler()
     X_train_num = scaler.fit_transform(train_data[num_features])
     X_test_num = scaler.transform(test_data[num_features])

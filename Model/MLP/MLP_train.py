@@ -20,8 +20,6 @@ def load_training_data():
     test_data = pd.read_csv("AIL_peak_test.csv")
 
 
-    train_data['POI_Interaction'] = train_data['POI_Density'] * train_data['POI_Type']
-    test_data['POI_Interaction'] = test_data['POI_Density'] * test_data['POI_Type']
 
 
     le = LabelEncoder()
@@ -32,7 +30,6 @@ def load_training_data():
     numerical_features = [
         'Road_Distance', 'Keyword_Count', 'POI_Density',
         'Query_Density', 'POI_Type', 'POI_Contain', 'Execution_Time',
-        'POI_Interaction'
     ]
     categorical_features = ['POI_distribution']
 
