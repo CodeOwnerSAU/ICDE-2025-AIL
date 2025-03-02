@@ -54,6 +54,3 @@ OptimalID represents the optimal algorithm that has been assigned to the current
 
 Then, preprocessing is carried out using preprocess.py, and the model is trained based on the hyperparameters in HYPERPARAMETERS.py.
 
-## 🔥 One-Click Launch
-
-We propose a novel perspective for addressing problems based on feature-driven solutions. If applicable to your research domain, we encourage you to give it a try!
